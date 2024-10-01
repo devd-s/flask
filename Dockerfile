@@ -1,7 +1,7 @@
 # Dockerfile
 
-# Use a lightweight Python image
-FROM python:3.8-slim
+# Use Python 2.x image
+FROM python:2.7-slim
 
 # Set the working directory
 WORKDIR /app
@@ -24,4 +24,5 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 # Run the Flask application
 CMD ["flask", "run", "--host=0.0.0.0"]
+
 
