@@ -77,7 +77,7 @@ jobs:
 
       - name: Download task definition 
         run: |
-          aws ecs describe-task-definition - task-definition dev-task - query taskDefinition > task-definition.json
+          aws ecs describe-task-definition --task-definition dev-task --query taskDefinition > task-definition.json
 
       # Deploy the registered task definition to ECS
       - name: Deploy to Amazon ECS
