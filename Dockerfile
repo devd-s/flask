@@ -1,5 +1,3 @@
-# Dockerfile
-
 # Use Python 2.x image
 FROM python:2.7-slim
 
@@ -16,13 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port that the Flask app runs on
-EXPOSE 5000
+EXPOSE 80
 
 # Set environment variables
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=80  # Change this to port 80
 
 # Run the Flask application
-CMD ["flask", "run", "--host=0.0.0.0"]
-
-
+CMD ["flask", "run", "--host=0.0.0.0", "--port=80"]
