@@ -17,9 +17,14 @@ COPY . .
 EXPOSE 80
 
 # Set environment variables
+# Set the Flask application file to run
 ENV FLASK_APP=app.py
+
+# Set the Flask host to 0.0.0.0 to allow external connections
 ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=80  # Change this to port 80
+
+# Set Flask to run on port 80
+ENV FLASK_RUN_PORT=80
 
 # Run the Flask application
 CMD ["flask", "run", "--host=0.0.0.0", "--port=80"]
