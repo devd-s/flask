@@ -75,44 +75,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Dynamically register a new ECS task definition using AWS CLI
-      - name: Register ECS Task Definition
-        id: register-task-def
+      - name: Download task definition 
         run: |
-          cat <<EOF > task-def.json
-          {
-            "family": "my-ecs-task",
-            "networkMode": "awsvpc",
-            "containerDefinitions": [
-              {
-                "name": "notejam-container",
-                "image": "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest",
-                "essential": true,
-                "memory": 512,
-                "cpu": 256,
-                "portMappings": [
-                  {
-                    "containerPort": 80,
-                    "hostPort": 80,
-                    "protocol": "tcp"
-                  }
-                ]
-              }
-            ],
-            "requiresCompatibilities": [
-              "FARGATE"
-            ],
-            "cpu": "256",
-            "memory": "512",
-            "executionRoleArn": "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole",
-            "taskRoleArn": "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskRole"
-          }
-          EOF
-
-          # Register the new task definition in ECS and get the task definition ARN
-          TASK_DEFINITION_ARN=$(aws ecs register-task-definition --cli-input-json file://task-def.json --query 'taskDefinition.taskDefinitionArn' --output text)
-          echo "Registered Task Definition ARN: $TASK_DEFINITION_ARN"
-          echo "TASK_DEFINITION_ARN=$TASK_DEFINITION_ARN" >> $GITHUB_ENV
+          aws ecs describe-task-definition - task-definition dev-task - query taskDefinition > task-definition.json
 
       # Deploy the registered task definition to ECS
       - name: Deploy to Amazon ECS
@@ -120,8 +85,8 @@ jobs:
         with:
           cluster: ${{ secrets.ECS_CLUSTER }}                # Name of the ECS cluster
           service: ${{ secrets.ECS_SERVICE }}                # Name of the ECS service
-          task-definition: ${{ env.TASK_DEFINITION_ARN }}    # Use the dynamically created task definition ARN
-          container-name: "notejam-container"                # Container name in the ECS task definition
+          task-definition: task-definition.json 
+          container-name: "dev-container"                    # Container name in the ECS task definition
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
 
       - name: Debug Task Definition ARN
