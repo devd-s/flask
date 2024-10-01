@@ -74,6 +74,7 @@ jobs:
         with:
           cluster: ${{ secrets.ECS_CLUSTER }}                    # Name of the ECS cluster
           service: ${{ secrets.ECS_SERVICE }}                    # Name of the ECS service
+          task-definition: "ecs-task-def.json"   
           container-name: ${{ secrets.DOCKER_IMAGE_NAME }}       # Container name in the ECS task definition
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
 
