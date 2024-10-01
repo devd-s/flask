@@ -1,5 +1,5 @@
 # Use Python 2.x image
-FROM python:3.9-slim
+FROM python:2.7-slim
 
 # Set the working directory
 WORKDIR /app
@@ -8,23 +8,24 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -U flask && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
 
 # Expose the port that the Flask app runs on
-EXPOSE 80
+EXPOSE 5000
 
 # Set environment variables
-# Set the Flask application file to run
-ENV FLASK_APP=app.py
+
+# Set Flask to run on port 80
+ENV FLASK_RUN_PORT=5000
 
 # Set the Flask host to 0.0.0.0 to allow external connections
 ENV FLASK_RUN_HOST=0.0.0.0
 
-# Set Flask to run on port 80
-ENV FLASK_RUN_PORT=80
+# Explicitly specify the entry point command
+CMD ["python", "runserver.py", "--host=0.0.0.0", "--port=5000" ]
 
-# Run the Flask application
-CMD ["flask", "run", "--host=0.0.0.0", "--port=80"]
